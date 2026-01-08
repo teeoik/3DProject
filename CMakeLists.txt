@@ -16,7 +16,12 @@ find_package(glad CONFIG REQUIRED)
 
 add_executable(3DProject
     src/main.cpp
+    src/app/Application.cpp
+    src/platform/GlfwWindow.cpp
+    src/ui/ImGuiLayer.cpp
 )
+
+target_include_directories(3DProject PRIVATE src)
 
 # Link libs
 target_link_libraries(3DProject PRIVATE
