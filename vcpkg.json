@@ -1,0 +1,13 @@
+{
+  "name": "3dproject",
+  "version": "0.1.0",
+  "dependencies": [
+    "glfw3",
+    "assimp",
+    "glad",
+    {
+      "name": "imgui",
+      "features": [ "glfw-binding", "opengl3-binding" ]
+    }
+  ]
+}
