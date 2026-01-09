@@ -9,53 +9,51 @@
 
 namespace app
 {
-  Application::Application()
-    : window_(1280, 720, "3DProject")
-  {
-    // Window must exist and have a current context before GLAD can load.
-    window_.makeContextCurrent();
-    window_.setVsync(true);
-
-    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    Application::Application()
+        : window_(1280, 720, "3DProject")
     {
-      throw std::runtime_error("Failed to initialize GLAD");
+        window_.makeContextCurrent();
+        window_.setVsync(true);
+
+        if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+            throw std::runtime_error("Failed to initialize GLAD");
+
+        imgui_.init(window_.nativeHandle(), "#version 330"); // GLFW + OpenGL3 backends
     }
 
-    // ImGui setup (GLFW + OpenGL3 backends)
-    imgui_.init(window_.nativeHandle(), "#version 330");
-  }
-
-  int Application::run()
-  {
-    while (!window_.shouldClose())
+    int Application::run()
     {
-      window_.pollEvents();
+        while (!window_.shouldClose())
+        {
+            window_.pollEvents();
 
-      imgui_.beginFrame();
+            imgui_.beginFrame();
 
-      drawUi();
+            drawUi();
 
-      // Render
-      imgui_.render(); // ImGui::Render() - generates draw data
+            // Render ImGui draw lists
+            imgui_.render();
 
-      const auto [fbw, fbh] = window_.framebufferSize();
-      glViewport(0, 0, fbw, fbh);
-      glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+            // Clear and set viewport for scene rendering
+            const auto [fbw, fbh] = window_.framebufferSize();
+            glViewport(0, 0, fbw, fbh);
+            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-      imgui_.endFrame(); // renders ImGui draw data via OpenGL3 backend
+            // Submit ImGui draw data to OpenGL backend and swap buffers
+            imgui_.endFrame();
 
-      window_.swapBuffers();
+            window_.swapBuffers();
+        }
+
+        return 0;
     }
 
-    return 0;
-  }
-
-  void Application::drawUi()
-  {
-    ImGui::Begin("3D Project");
-    ImGui::Text("Hello from ImGui.");
-    ImGui::Text("OpenGL version: %s", glGetString(GL_VERSION));
-    ImGui::End();
-  }
+    void Application::drawUi()
+    {
+        ImGui::Begin("3D Project");
+        ImGui::Text("Hello from ImGui.");
+        ImGui::Text("OpenGL version: %s", glGetString(GL_VERSION));
+        ImGui::End();
+    }
 }

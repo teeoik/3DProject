@@ -33,7 +33,7 @@ target_link_libraries(3DProject PRIVATE
 
 # Windows: OpenGL is in opengl32
 if (WIN32)
-  target_link_libraries(3DProject PRIVATE opengl32)
+    target_link_libraries(3DProject PRIVATE opengl32)
 endif()
 
 target_compile_definitions(3DProject PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD)
