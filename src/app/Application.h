@@ -2,8 +2,11 @@
 
 #include "platform/GlfwWindow.h"
 #include "ui/ImGuiLayer.h"
+#include "graphics/Mesh.h"
 
 #include <imgui.h>
+#include <optional>
+#include <string>
 
 namespace app
 {
@@ -89,5 +92,7 @@ namespace app
 
         platform::GlfwWindow window_;
         ui::ImGuiLayer imgui_;
+        std::optional<std::string> selectedObjFile_;
+        std::optional<graphics::Model> currentModel_;
     };
 }

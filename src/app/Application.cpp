@@ -1,4 +1,5 @@
 #include "app/Application.h"
+#include "graphics/ModelLoader.h"
 
 #include <stdexcept>
 
@@ -7,6 +8,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+
 
 namespace app
 {
@@ -114,21 +116,56 @@ namespace app
     void Application::drawToolbarPanel()
     {
         ImGui::Begin("Toolbar");
-        ImGui::Text("Toolbar");
+
+        if (ImGui::Button("Open OBJ", ImVec2(100, 0)))
+        {
+            auto filePath = imgui_.openFileDialog();
+            if (filePath.has_value())
+            {
+                selectedObjFile_ = filePath.value();
+                try
+                {
+                    currentModel_ = graphics::ModelLoader::load(selectedObjFile_.value());
+                }
+                catch (const graphics::ModelLoadException& e)
+                {
+                    // TODO: Display error to user in UI
+                    currentModel_ = std::nullopt;
+                }
+            }
+        }
+
+        ImGui::SameLine();
+        if (selectedObjFile_.has_value())
+            ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "File: %s", selectedObjFile_.value().c_str());
+
         ImGui::End();
     }
 
     void Application::drawModelTreePanel()
     {
         ImGui::Begin("Model Tree");
-        ImGui::Text("Model Tree");
+        if (currentModel_.has_value())
+        {
+            ImGui::Text("Model loaded");
+            ImGui::Text("Meshes: %zu", currentModel_.value().meshes.size());
+            ImGui::Text("Vertices: %zu", currentModel_.value().getVertexCount());
+            ImGui::Text("Triangles: %zu", currentModel_.value().getTriangleCount());
+        }
+        else
+        {
+            ImGui::Text("No model loaded");
+        }
         ImGui::End();
     }
 
     void Application::drawModelViewPanel()
     {
         ImGui::Begin("Model View");
-        ImGui::Text("Model View");
+        if (currentModel_.has_value())
+            ImGui::Text("Model is ready for rendering");
+        else
+            ImGui::Text("Model View");
         ImGui::End();
     }
 

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <string>
 #include <string_view>
+#include <optional>
 
 struct GLFWwindow;
 
@@ -87,6 +89,15 @@ namespace ui
          * @post ImGui context and backends are destroyed; layer returns to uninitialized state.
          */
         void shutdown();
+
+        /**
+         * @brief Opens a file dialog to select an OBJ file.
+         *
+         * Opens a native file dialog on Windows to browse and select an OBJ file.
+         *
+         * @return std::optional containing the full path to the selected file, or std::nullopt if cancelled.
+         */
+        std::optional<std::string> openFileDialog();
 
     private:
         bool initialized_ = false;
