@@ -21,6 +21,22 @@ add_executable(3DProject
     src/ui/ImGuiLayer.cpp
 )
 
+# Hide console in release builds on Windows
+if (WIN32)
+    set_target_properties(3DProject PROPERTIES
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    )
+    # Use WIN32 property but only apply SUBSYSTEM:WINDOWS linker flag for Release
+    set_property(TARGET 3DProject APPEND PROPERTY LINK_OPTIONS
+        $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS>
+        $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
+    )
+    # Set entry point for Windows subsystem
+    set_property(TARGET 3DProject APPEND PROPERTY LINK_OPTIONS
+        $<$<CONFIG:Release>:/ENTRY:mainCRTStartup>
+    )
+endif()
+
 target_include_directories(3DProject PRIVATE src)
 
 # Link libs
