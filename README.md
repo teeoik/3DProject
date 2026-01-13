@@ -12,7 +12,7 @@ Project uses OpenGL for rendering. GLFW is used for window and input management,
 function loading, and Dear ImGui for simple GUI.
 
 ## Tech Stack
-- C++20
+- C++23
 - OpenGL 3.3 Core
 - GLFW
 - GLAD

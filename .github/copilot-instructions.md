@@ -1,7 +1,7 @@
 # Copilot instructions for 3DProject
 
 ## Language & build
-- Use C++20.
+- Use C++23.
 - Prefer standard library types (std::string, std::vector, std::span) over custom equivalents.
 - Code must compile on Windows with MSVC and CMake.
 
