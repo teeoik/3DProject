@@ -7,6 +7,7 @@
 
 ## Code style
 - Braces: Allman style.
+  - Do not use braces for single-statement control blocks.
 - Indentation: 4 spaces, no tabs.
 - Naming:
   - Types: PascalCase (Renderer, GlfwWindow)
