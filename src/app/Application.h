@@ -3,6 +3,8 @@
 #include "platform/GlfwWindow.h"
 #include "ui/ImGuiLayer.h"
 
+#include <imgui.h>
+
 namespace app
 {
     /**
@@ -51,12 +53,39 @@ namespace app
         /**
          * @brief Renders the application UI using ImGui.
          *
-         * Draws the main ImGui window with debug information including
-         * OpenGL version string.
+         * Sets up a docking-enabled UI with three panels: Toolbar (top 10%),
+         * Model Tree (left 25%), and Model View (remaining space).
+         * Initializes the docking layout on the first frame.
          *
          * @pre ImGui frame must be active (beginFrame() called in current frame).
          */
         void drawUi();
+
+        /**
+         * @brief Initializes the default docking layout on first frame.
+         *
+         * Creates a dockspace with three regions: top toolbar, left model tree,
+         * and main model view area.
+         *
+         * @param dockspaceId ImGui dockspace identifier.
+         * @param viewportSize Size of the main viewport.
+         */
+        void initializeDockingLayout(ImGuiID dockspaceId, ImVec2 viewportSize);
+
+        /**
+         * @brief Renders the toolbar panel.
+         */
+        void drawToolbarPanel();
+
+        /**
+         * @brief Renders the model tree panel.
+         */
+        void drawModelTreePanel();
+
+        /**
+         * @brief Renders the model view panel.
+         */
+        void drawModelViewPanel();
 
         platform::GlfwWindow window_;
         ui::ImGuiLayer imgui_;

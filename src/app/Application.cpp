@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 namespace app
 {
@@ -51,9 +52,84 @@ namespace app
 
     void Application::drawUi()
     {
-        ImGui::Begin("3D Project");
-        ImGui::Text("Hello from ImGui.");
-        ImGui::Text("OpenGL version: %s", glGetString(GL_VERSION));
+        static bool firstFrame = true;
+
+        constexpr ImGuiWindowFlags HOST_FLAGS =
+            ImGuiWindowFlags_NoDocking |
+            ImGuiWindowFlags_NoTitleBar |
+            ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoResize |
+            ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoNavFocus |
+            ImGuiWindowFlags_MenuBar;
+
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->Pos);
+        ImGui::SetNextWindowSize(viewport->Size);
+        ImGui::SetNextWindowViewport(viewport->ID);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+        ImGui::Begin("DockHost", nullptr, HOST_FLAGS);
+        ImGui::PopStyleVar(2);
+
+        ImGuiID dockspaceId = ImGui::GetID("MainDockspace");
+        ImGui::DockSpace(dockspaceId, ImVec2(0, 0), ImGuiDockNodeFlags_None);
+
+        if (firstFrame)
+        {
+            firstFrame = false;
+            initializeDockingLayout(dockspaceId, viewport->Size);
+        }
+
+        ImGui::End();
+
+        drawToolbarPanel();
+        drawModelTreePanel();
+        drawModelViewPanel();
+    }
+
+    void Application::initializeDockingLayout(ImGuiID dockspaceId, ImVec2 viewportSize)
+    {
+        ImGui::DockBuilderRemoveNode(dockspaceId);
+        ImGui::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
+        ImGui::DockBuilderSetNodeSize(dockspaceId, viewportSize);
+
+        ImGuiID dockMain = dockspaceId;
+        ImGuiID dockLeft;
+        ImGuiID dockTop;
+
+        ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Up, 0.10f, &dockTop, &dockMain);
+        ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.25f, &dockLeft, &dockMain);
+
+        ImGui::DockBuilderDockWindow("Toolbar", dockTop);
+        ImGui::DockBuilderDockWindow("Model Tree", dockLeft);
+        ImGui::DockBuilderDockWindow("Model View", dockMain);
+
+        ImGui::DockBuilderFinish(dockspaceId);
+    }
+
+    void Application::drawToolbarPanel()
+    {
+        ImGui::Begin("Toolbar");
+        ImGui::Text("Toolbar");
         ImGui::End();
     }
+
+    void Application::drawModelTreePanel()
+    {
+        ImGui::Begin("Model Tree");
+        ImGui::Text("Model Tree");
+        ImGui::End();
+    }
+
+    void Application::drawModelViewPanel()
+    {
+        ImGui::Begin("Model View");
+        ImGui::Text("Model View");
+        ImGui::End();
+    }
+
 }
