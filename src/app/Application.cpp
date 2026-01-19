@@ -1,13 +1,15 @@
 #include "app/Application.h"
 #include "graphics/ModelLoader.h"
 
+#include <iostream>
+#include <optional>
 #include <stdexcept>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include <imgui.h>
 #include <imgui_internal.h>
+
 
 
 namespace app
@@ -129,7 +131,7 @@ namespace app
                 }
                 catch (const graphics::ModelLoadException& e)
                 {
-                    // TODO: Display error to user in UI
+                    std::cerr << "Error loading model: " << e.what() << std::endl;
                     currentModel_ = std::nullopt;
                 }
             }
