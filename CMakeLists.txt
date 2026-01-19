@@ -19,8 +19,13 @@ add_executable(3DProject
     src/app/Application.cpp
     src/platform/GlfwWindow.cpp
     src/ui/ImGuiLayer.cpp
-    src/graphics/Mesh.cpp
-    src/graphics/ModelLoader.cpp
+    src/gfx/Mesh.cpp
+    src/gfx/ModelLoader.cpp
+    src/gfx/RenderTarget.cpp
+    src/scene/CameraOrbit.cpp
+    src/scene/Scene.cpp
+    src/gfx/Renderer.cpp
+    src/ui/ViewportPanel.cpp
 )
 
 # Hide console in release builds on Windows

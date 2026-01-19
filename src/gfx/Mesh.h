@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace graphics
+namespace gfx
 {
     /**
      * @brief Simple 3D vector representation.

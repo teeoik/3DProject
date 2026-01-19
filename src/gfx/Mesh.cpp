@@ -1,6 +1,6 @@
-#include "graphics/Mesh.h"
+#include "gfx/Mesh.h"
 
-namespace graphics
+namespace gfx
 {
     size_t Model::getTriangleCount() const
     {

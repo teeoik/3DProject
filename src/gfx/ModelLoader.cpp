@@ -1,12 +1,14 @@
-#include "graphics/ModelLoader.h"
+#include "gfx/ModelLoader.h"
+#include "gfx/Mesh.h"
+
+#include <sstream>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <sstream>
 
-namespace graphics
+namespace gfx
 {
     Model ModelLoader::load(std::string_view filePath)
     {

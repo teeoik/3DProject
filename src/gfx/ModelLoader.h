@@ -1,11 +1,11 @@
 #pragma once
 
-#include "graphics/Mesh.h"
+#include "gfx/Mesh.h"
 
 #include <string_view>
 #include <stdexcept>
 
-namespace graphics
+namespace gfx
 {
     /**
      * @brief Exception thrown when model loading fails.

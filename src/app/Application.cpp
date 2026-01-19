@@ -1,5 +1,5 @@
 #include "app/Application.h"
-#include "graphics/ModelLoader.h"
+#include "gfx/ModelLoader.h"
 
 #include <iostream>
 #include <optional>
@@ -127,9 +127,9 @@ namespace app
                 selectedObjFile_ = filePath.value();
                 try
                 {
-                    currentModel_ = graphics::ModelLoader::load(selectedObjFile_.value());
+                    currentModel_ = gfx::ModelLoader::load(selectedObjFile_.value());
                 }
-                catch (const graphics::ModelLoadException& e)
+                catch (const gfx::ModelLoadException& e)
                 {
                     std::cerr << "Error loading model: " << e.what() << std::endl;
                     currentModel_ = std::nullopt;
