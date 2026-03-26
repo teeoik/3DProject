@@ -78,5 +78,6 @@ namespace app
         scene::Scene scene_;
         scene::CameraOrbit camera_;
         ui::ViewportPanel viewportPanel_;
+        gfx::RenderSettings renderSettings_ = gfx::RenderSettings::defaultSettings();
     };
 }

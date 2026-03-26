@@ -14,6 +14,11 @@ The goal is to practice efficient multithreaded code and rendering while working
     - Middle mouse drag: Pan camera
     - Mouse wheel: Zoom in/out
 - Toolbar with file browser for loading models
+- Graphics settings panel:
+    - Background styles: solid color, gradient, or checkered pattern
+    - Light/dark background toggle
+    - Mesh color options
+    - Configurable draw modes
 
 Project uses OpenGL for rendering. GLFW is used for window and input management, GLAD for OpenGL 
 function loading, and Dear ImGui for the docking UI interface.

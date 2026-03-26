@@ -1,11 +1,14 @@
 #include "gfx/Renderer.h"
 #include "gfx/Mesh.h"
+#include "gfx/RenderSettings.h"
 #include "gfx/RenderTarget.h"
 #include "gfx/ShaderLoader.h"
 #include "gfx/ShaderProgram.h"
 #include "scene/CameraOrbit.h"
 #include "scene/Scene.h"
 
+#include <exception>
+#include <iostream>
 #include <memory>
 #include <string>
 
@@ -21,6 +24,12 @@ namespace gfx
             glDeleteBuffers(1, &data.vbo);
             glDeleteBuffers(1, &data.ebo);
             glDeleteVertexArrays(1, &data.vao);
+        }
+
+        if (backgroundVao_ != 0)
+        {
+            glDeleteVertexArrays(1, &backgroundVao_);
+            glDeleteBuffers(1, &backgroundVbo_);
         }
     }
 
@@ -63,7 +72,109 @@ namespace gfx
         }
     }
 
-    void Renderer::render(const scene::Scene& scene, const scene::CameraOrbit& camera, const RenderTarget& target)
+    void Renderer::ensureBackgroundInitialized()
+    {
+        if (backgroundVao_ != 0)
+            return;
+
+        float vertices[] = {
+            -1.0f, -1.0f,
+             1.0f, -1.0f,
+            -1.0f,  1.0f,
+             1.0f,  1.0f
+        };
+
+        glGenVertexArrays(1, &backgroundVao_);
+        glGenBuffers(1, &backgroundVbo_);
+
+        glBindVertexArray(backgroundVao_);
+        glBindBuffer(GL_ARRAY_BUFFER, backgroundVbo_);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        glBindVertexArray(0);
+
+        try
+        {
+            std::string vertexSource = ShaderLoader::loadFromFile("shaders/background.vert");
+            std::string gradientFragmentSource = ShaderLoader::loadFromFile("shaders/background_gradient.frag");
+            std::string checkeredFragmentSource = ShaderLoader::loadFromFile("shaders/background_checkered.frag");
+
+            backgroundShader_ = std::make_unique<ShaderProgram>(vertexSource, gradientFragmentSource);
+            checkeredShader_ = std::make_unique<ShaderProgram>(vertexSource, checkeredFragmentSource);
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Failed to load background shaders: " << e.what() << std::endl;
+            std::cerr << "Current working directory might be incorrect. Ensure shader files are in 'shaders/' directory." << std::endl;
+        }
+    }
+
+    void Renderer::applyBackground(const RenderSettings& settings, int width, int height)
+    {
+        const auto color = settings.getBackgroundColor();
+
+        switch (settings.backgroundType)
+        {
+        case RenderSettings::BackgroundType::SolidColor:
+            glClearColor(color.r, color.g, color.b, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            break;
+
+        case RenderSettings::BackgroundType::Gradient:
+        {
+            glClearColor(color.r, color.g, color.b, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            ensureBackgroundInitialized();
+
+            if (!backgroundShader_)
+            {
+                break;
+            }
+
+            glDisable(GL_DEPTH_TEST);
+            backgroundShader_->use();
+            backgroundShader_->setVec3("uColor", color);
+
+            glBindVertexArray(backgroundVao_);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            glBindVertexArray(0);
+
+            glEnable(GL_DEPTH_TEST);
+            break;
+        }
+
+        case RenderSettings::BackgroundType::Checkered:
+        {
+            glClearColor(color.r, color.g, color.b, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            ensureBackgroundInitialized();
+
+            if (!checkeredShader_)
+            {
+                break;
+            }
+
+            glDisable(GL_DEPTH_TEST);
+            checkeredShader_->use();
+            checkeredShader_->setVec3("uColor", color);
+            checkeredShader_->setVec2("uResolution", glm::vec2(static_cast<float>(width), static_cast<float>(height)));
+
+            glBindVertexArray(backgroundVao_);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+            glBindVertexArray(0);
+
+            glEnable(GL_DEPTH_TEST);
+            break;
+        }
+        }
+    }
+
+    void Renderer::render(const scene::Scene& scene, const scene::CameraOrbit& camera, const RenderTarget& target, const RenderSettings& settings)
     {
         target.bind();
 
@@ -71,8 +182,7 @@ namespace gfx
 
         glEnable(GL_DEPTH_TEST);
 
-        glClearColor(0.12f, 0.12f, 0.12f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        applyBackground(settings, target.width(), target.height());
 
         ensureShaderInitialized();
         shader_->use();
@@ -82,6 +192,7 @@ namespace gfx
 
         shader_->setMat4("uView", view);
         shader_->setMat4("uProjection", projection);
+        shader_->setVec3("uMeshColor", settings.getMeshColor());
 
         if (scene.model.has_value())
         {

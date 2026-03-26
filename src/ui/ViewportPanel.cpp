@@ -10,7 +10,7 @@
 
 namespace ui
 {
-    void ViewportPanel::draw(gfx::Renderer& renderer, scene::Scene& scene, scene::CameraOrbit& camera)
+    void ViewportPanel::draw(gfx::Renderer& renderer, scene::Scene& scene, scene::CameraOrbit& camera, const gfx::RenderSettings& settings)
     {
         ImGui::Begin("Model View");
 
@@ -47,7 +47,7 @@ namespace ui
                 camera.onMouseWheel(wheel);
         }
 
-        renderer.render(scene, camera, target_);
+        renderer.render(scene, camera, target_, settings);
 
         // OpenGL textures have origin at bottom-left; ImGui assumes top-left. Flip UVs vertically.
         ImTextureID texId = (ImTextureID)(uintptr_t)target_.colorTexture();

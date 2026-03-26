@@ -54,6 +54,18 @@ namespace gfx
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
+    void ShaderProgram::setVec3(std::string_view name, const glm::vec3& value) const
+    {
+        int location = glGetUniformLocation(program_, name.data());
+        glUniform3fv(location, 1, glm::value_ptr(value));
+    }
+
+    void ShaderProgram::setVec2(std::string_view name, const glm::vec2& value) const
+    {
+        int location = glGetUniformLocation(program_, name.data());
+        glUniform2fv(location, 1, glm::value_ptr(value));
+    }
+
     std::uint32_t ShaderProgram::compileShader(std::string_view source, std::uint32_t type)
     {
         std::uint32_t shader = glCreateShader(type);

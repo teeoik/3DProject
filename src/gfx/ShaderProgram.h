@@ -41,6 +41,22 @@ namespace gfx
          */
         void setMat4(std::string_view name, const glm::mat4& matrix) const;
 
+        /**
+         * @brief Sets a vec3 uniform.
+         *
+         * @param name Uniform variable name.
+         * @param value The vec3 value.
+         */
+        void setVec3(std::string_view name, const glm::vec3& value) const;
+
+        /**
+         * @brief Sets a vec2 uniform.
+         *
+         * @param name Uniform variable name.
+         * @param value The vec2 value.
+         */
+        void setVec2(std::string_view name, const glm::vec2& value) const;
+
     private:
         std::uint32_t program_ = 0;
 

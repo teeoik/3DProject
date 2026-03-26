@@ -102,7 +102,7 @@ namespace app
         ImGuiID dockLeft;
         ImGuiID dockTop;
 
-        ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Up, 0.10f, &dockTop, &dockMain);
+        ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Up, 0.20f, &dockTop, &dockMain);
         ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.25f, &dockLeft, &dockMain);
 
         ImGui::DockBuilderDockWindow("Toolbar", dockTop);
@@ -116,29 +116,88 @@ namespace app
     {
         ImGui::Begin("Toolbar");
 
-        if (ImGui::Button("Open OBJ", ImVec2(100, 0)))
+        if (ImGui::BeginTabBar("ToolbarTabs"))
         {
-            auto filePath = imgui_.openFileDialog();
-            if (filePath.has_value())
+            if (ImGui::BeginTabItem("File"))
             {
-                selectedObjFile_ = filePath.value();
-                try
+                if (ImGui::Button("Open OBJ", ImVec2(100, 0)))
                 {
-                    currentModel_ = gfx::ModelLoader::load(selectedObjFile_.value());
-                    scene_.model = currentModel_;
+                    auto filePath = imgui_.openFileDialog();
+                    if (filePath.has_value())
+                    {
+                        selectedObjFile_ = filePath.value();
+                        try
+                        {
+                            currentModel_ = gfx::ModelLoader::load(selectedObjFile_.value());
+                            scene_.model = currentModel_;
+                        }
+                        catch (const gfx::ModelLoadException& e)
+                        {
+                            std::cerr << "Error loading model: " << e.what() << std::endl;
+                            currentModel_ = std::nullopt;
+                            scene_.model = std::nullopt;
+                        }
+                    }
                 }
-                catch (const gfx::ModelLoadException& e)
-                {
-                    std::cerr << "Error loading model: " << e.what() << std::endl;
-                    currentModel_ = std::nullopt;
-                    scene_.model = std::nullopt;
-                }
-            }
-        }
 
-        ImGui::SameLine();
-        if (selectedObjFile_.has_value())
-            ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "File: %s", selectedObjFile_.value().c_str());
+                ImGui::SameLine();
+                if (selectedObjFile_.has_value())
+                    ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "File: %s", selectedObjFile_.value().c_str());
+
+                ImGui::EndTabItem();
+            }
+
+            if (ImGui::BeginTabItem("Graphics"))
+            {
+                ImGui::BeginGroup();
+                ImGui::Text("Background");
+
+                bool isLight = renderSettings_.lightBackground;
+                if (ImGui::RadioButton("Light", isLight))
+                    renderSettings_.lightBackground = true;
+                ImGui::SameLine();
+                if (ImGui::RadioButton("Dark", !isLight))
+                    renderSettings_.lightBackground = false;
+
+                ImGui::SetNextItemWidth(150);
+                const char* bgTypes[] = { "Solid Color", "Gradient", "Checkered" };
+                int currentBg = static_cast<int>(renderSettings_.backgroundType);
+                if (ImGui::Combo("##Background", &currentBg, bgTypes, IM_ARRAYSIZE(bgTypes)))
+                    renderSettings_.backgroundType = static_cast<gfx::RenderSettings::BackgroundType>(currentBg);
+                ImGui::EndGroup();
+
+                ImGui::SameLine();
+                ImGui::Dummy(ImVec2(30, 0));
+                ImGui::SameLine();
+
+                ImGui::BeginGroup();
+                ImGui::Text("Draw Mode");
+                if (ImGui::RadioButton("Mesh", renderSettings_.drawMode == gfx::RenderSettings::DrawMode::Mesh))
+                    renderSettings_.drawMode = gfx::RenderSettings::DrawMode::Mesh;
+                ImGui::EndGroup();
+
+                if (renderSettings_.drawMode == gfx::RenderSettings::DrawMode::Mesh)
+                {
+                    ImGui::SameLine();
+                    ImGui::Dummy(ImVec2(30, 0));
+                    ImGui::SameLine();
+
+                    ImGui::BeginGroup();
+                    ImGui::Text("Mesh Color");
+                    bool isGreen = renderSettings_.greenMesh;
+                    if (ImGui::RadioButton("Green", isGreen))
+                        renderSettings_.greenMesh = true;
+                    ImGui::SameLine();
+                    if (ImGui::RadioButton("Black", !isGreen))
+                        renderSettings_.greenMesh = false;
+                    ImGui::EndGroup();
+                }
+
+                ImGui::EndTabItem();
+            }
+
+            ImGui::EndTabBar();
+        }
 
         ImGui::End();
     }
@@ -162,7 +221,7 @@ namespace app
 
     void Application::drawModelViewPanel()
     {
-        viewportPanel_.draw(renderer_, scene_, camera_);
+        viewportPanel_.draw(renderer_, scene_, camera_, renderSettings_);
     }
 
 }

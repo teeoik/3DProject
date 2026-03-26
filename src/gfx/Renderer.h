@@ -2,6 +2,7 @@
 
 #include "gfx/Mesh.h"
 #include "gfx/RenderTarget.h"
+#include "gfx/RenderSettings.h"
 #include "gfx/ShaderProgram.h"
 #include "scene/CameraOrbit.h"
 #include "scene/Scene.h"
@@ -51,16 +52,23 @@ namespace gfx
          * @param scene The scene to render.
          * @param camera The camera providing view/projection information.
          * @param target The render target to draw to.
+         * @param settings Rendering settings controlling background and draw modes.
          */
-        void render(const scene::Scene& scene, const scene::CameraOrbit& camera, const RenderTarget& target);
+        void render(const scene::Scene& scene, const scene::CameraOrbit& camera, const RenderTarget& target, const RenderSettings& settings);
 
     private:
         void uploadMeshData(const Mesh& mesh, MeshRenderData& renderData);
         void renderMesh(const MeshRenderData& renderData);
         void ensureShaderInitialized();
+        void ensureBackgroundInitialized();
+        void applyBackground(const RenderSettings& settings, int width, int height);
 
         std::unordered_map<std::size_t, MeshRenderData> meshCache_;
         std::unique_ptr<ShaderProgram> shader_;
+        std::unique_ptr<ShaderProgram> backgroundShader_;
+        std::unique_ptr<ShaderProgram> checkeredShader_;
+        std::uint32_t backgroundVao_ = 0;
+        std::uint32_t backgroundVbo_ = 0;
     };
 }
 

@@ -2,6 +2,7 @@
 
 #include "gfx/RenderTarget.h"
 #include "gfx/Renderer.h"
+#include "gfx/RenderSettings.h"
 #include "scene/CameraOrbit.h"
 #include "scene/Scene.h"
 
@@ -24,8 +25,9 @@ namespace ui
          * @param renderer The graphics renderer to render the scene.
          * @param scene The scene to render.
          * @param camera The camera to use for rendering and receive input.
+         * @param settings Rendering settings controlling background and draw modes.
          */
-        void draw(gfx::Renderer& renderer, scene::Scene& scene, scene::CameraOrbit& camera);
+        void draw(gfx::Renderer& renderer, scene::Scene& scene, scene::CameraOrbit& camera, const gfx::RenderSettings& settings);
 
     private:
         gfx::RenderTarget target_;
