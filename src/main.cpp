@@ -1,7 +1,7 @@
+#include "app/Application.h"
+
 #include <cstdio>
 #include <exception>
-
-#include "app/Application.h"
 
 int main()
 {

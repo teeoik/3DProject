@@ -1,0 +1,9 @@
+set(GFX_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Mesh.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ModelLoader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/RenderTarget.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Renderer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ShaderLoader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ShaderProgram.cpp
+    PARENT_SCOPE
+)

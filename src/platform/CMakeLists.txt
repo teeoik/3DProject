@@ -1,0 +1,4 @@
+set(PLATFORM_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/GlfwWindow.cpp
+    PARENT_SCOPE
+)

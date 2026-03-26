@@ -1,5 +1,6 @@
 #include "app/Application.h"
 #include "gfx/ModelLoader.h"
+#include "ui/ViewportPanel.h"
 
 #include <iostream>
 #include <optional>
@@ -33,10 +34,7 @@ namespace app
             window_.pollEvents();
 
             imgui_.beginFrame();
-
             drawUi();
-
-            // Render ImGui draw lists
             imgui_.render();
 
             // Clear and set viewport for scene rendering
@@ -45,7 +43,6 @@ namespace app
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // Submit ImGui draw data to OpenGL backend and swap buffers
             imgui_.endFrame();
 
             window_.swapBuffers();
@@ -128,11 +125,13 @@ namespace app
                 try
                 {
                     currentModel_ = gfx::ModelLoader::load(selectedObjFile_.value());
+                    scene_.model = currentModel_;
                 }
                 catch (const gfx::ModelLoadException& e)
                 {
                     std::cerr << "Error loading model: " << e.what() << std::endl;
                     currentModel_ = std::nullopt;
+                    scene_.model = std::nullopt;
                 }
             }
         }
@@ -163,12 +162,7 @@ namespace app
 
     void Application::drawModelViewPanel()
     {
-        ImGui::Begin("Model View");
-        if (currentModel_.has_value())
-            ImGui::Text("Model is ready for rendering");
-        else
-            ImGui::Text("Model View");
-        ImGui::End();
+        viewportPanel_.draw(renderer_, scene_, camera_);
     }
 
 }

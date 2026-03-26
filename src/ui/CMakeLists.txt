@@ -1,0 +1,5 @@
+set(UI_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/ImGuiLayer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ViewportPanel.cpp
+    PARENT_SCOPE
+)

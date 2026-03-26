@@ -1,8 +1,12 @@
 #pragma once
 
-#include "platform/GlfwWindow.h"
-#include "ui/ImGuiLayer.h"
 #include "gfx/Mesh.h"
+#include "gfx/Renderer.h"
+#include "platform/GlfwWindow.h"
+#include "scene/CameraOrbit.h"
+#include "scene/Scene.h"
+#include "ui/ImGuiLayer.h"
+#include "ui/ViewportPanel.h"
 
 #include <imgui.h>
 #include <optional>
@@ -56,43 +60,23 @@ namespace app
         /**
          * @brief Renders the application UI using ImGui.
          *
-         * Sets up a docking-enabled UI with three panels: Toolbar (top 10%),
-         * Model Tree (left 25%), and Model View (remaining space).
-         * Initializes the docking layout on the first frame.
-         *
          * @pre ImGui frame must be active (beginFrame() called in current frame).
          */
         void drawUi();
 
-        /**
-         * @brief Initializes the default docking layout on first frame.
-         *
-         * Creates a dockspace with three regions: top toolbar, left model tree,
-         * and main model view area.
-         *
-         * @param dockspaceId ImGui dockspace identifier.
-         * @param viewportSize Size of the main viewport.
-         */
         void initializeDockingLayout(ImGuiID dockspaceId, ImVec2 viewportSize);
 
-        /**
-         * @brief Renders the toolbar panel.
-         */
         void drawToolbarPanel();
-
-        /**
-         * @brief Renders the model tree panel.
-         */
         void drawModelTreePanel();
-
-        /**
-         * @brief Renders the model view panel.
-         */
         void drawModelViewPanel();
 
         platform::GlfwWindow window_;
         ui::ImGuiLayer imgui_;
         std::optional<std::string> selectedObjFile_;
         std::optional<gfx::Model> currentModel_;
+        gfx::Renderer renderer_;
+        scene::Scene scene_;
+        scene::CameraOrbit camera_;
+        ui::ViewportPanel viewportPanel_;
     };
 }

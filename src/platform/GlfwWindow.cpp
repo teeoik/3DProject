@@ -1,9 +1,9 @@
 #include "platform/GlfwWindow.h"
 
 #include <cstdio>
-#include <utility>
 #include <stdexcept>
 #include <string_view>
+#include <utility>
 
 #include <GLFW/glfw3.h>
 
