@@ -32,7 +32,7 @@ function loading, and Dear ImGui for the docking UI interface.
 - Assimp (3D model loading)
 - GLM (mathematics library)
 - CMake + vcpkg (build system)
-- Visual Studio 2022 (Windows)
+- Visual Studio 2026 (Windows)
 
 ## Build
 ```bash

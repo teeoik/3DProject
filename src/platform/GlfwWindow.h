@@ -1,7 +1,7 @@
 #pragma once
 
-#include <utility>
 #include <string_view>
+#include <utility>
 
 struct GLFWwindow;
 

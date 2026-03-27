@@ -2,6 +2,7 @@
 
 #include "gfx/Mesh.h"
 #include "gfx/Renderer.h"
+#include "gfx/RenderSettings.h"
 #include "platform/GlfwWindow.h"
 #include "scene/CameraOrbit.h"
 #include "scene/Scene.h"
@@ -31,7 +32,7 @@ namespace app
         /**
          * @brief Constructs the application and initializes all subsystems.
          *
-         * Creates a 1280x720 window titled "3DProject", makes its OpenGL context current,
+         * Creates a window titled "3DProject", makes its OpenGL context current,
          * enables vsync, initializes GLAD for OpenGL function loading, and sets up ImGui
          * with GLFW and OpenGL3 backends.
          *
@@ -79,5 +80,6 @@ namespace app
         scene::CameraOrbit camera_;
         ui::ViewportPanel viewportPanel_;
         gfx::RenderSettings renderSettings_ = gfx::RenderSettings::defaultSettings();
+        bool firstFrame_ = true;
     };
 }

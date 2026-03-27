@@ -61,6 +61,7 @@ namespace gfx
         void renderMesh(const MeshRenderData& renderData);
         void ensureShaderInitialized();
         void ensureBackgroundInitialized();
+        void renderBackgroundShader(ShaderProgram* shader, const glm::vec3& color, int width, int height) const;
         void applyBackground(const RenderSettings& settings, int width, int height);
 
         std::unordered_map<std::size_t, MeshRenderData> meshCache_;

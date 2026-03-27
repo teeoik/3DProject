@@ -53,8 +53,6 @@ namespace app
 
     void Application::drawUi()
     {
-        static bool firstFrame = true;
-
         constexpr ImGuiWindowFlags HOST_FLAGS =
             ImGuiWindowFlags_NoDocking |
             ImGuiWindowFlags_NoTitleBar |
@@ -79,9 +77,9 @@ namespace app
         ImGuiID dockspaceId = ImGui::GetID("MainDockspace");
         ImGui::DockSpace(dockspaceId, ImVec2(0, 0), ImGuiDockNodeFlags_None);
 
-        if (firstFrame)
+        if (firstFrame_)
         {
-            firstFrame = false;
+            firstFrame_ = false;
             initializeDockingLayout(dockspaceId, viewport->Size);
         }
 

@@ -2,26 +2,17 @@
 
 #include <vector>
 
+#include <glm/ext/vector_float3.hpp>
+
 namespace gfx
 {
-    /**
-     * @brief Simple 3D vector representation.
-     */
-    struct Vec3
-    {
-        float x, y, z;
-
-        Vec3() = default;
-        Vec3(float x, float y, float z) : x(x), y(y), z(z) {}
-    };
-
     /**
      * @brief Represents a single mesh with vertices and indices.
      */
     struct Mesh
     {
-        std::vector<Vec3> positions;
-        std::vector<Vec3> normals;
+        std::vector<glm::vec3> positions;
+        std::vector<glm::vec3> normals;
         std::vector<unsigned int> indices;
     };
 

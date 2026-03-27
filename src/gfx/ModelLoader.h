@@ -2,6 +2,7 @@
 
 #include "gfx/Mesh.h"
 
+#include <string>
 #include <string_view>
 #include <stdexcept>
 

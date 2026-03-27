@@ -2,10 +2,12 @@
 #include "gfx/Mesh.h"
 
 #include <sstream>
+#include <string_view>
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
+#include <assimp/mesh.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 
 namespace gfx

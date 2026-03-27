@@ -13,6 +13,7 @@
 #include <string>
 
 #include <glad/glad.h>
+#include <glm/ext/vector_float3.hpp>
 #include <glm/fwd.hpp>
 
 namespace gfx
@@ -42,9 +43,9 @@ namespace gfx
         glBindVertexArray(renderData.vao);
 
         glBindBuffer(GL_ARRAY_BUFFER, renderData.vbo);
-        glBufferData(GL_ARRAY_BUFFER, mesh.positions.size() * sizeof(Vec3), mesh.positions.data(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mesh.positions.size() * sizeof(glm::vec3), mesh.positions.data(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vec3), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
         glEnableVertexAttribArray(0);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, renderData.ebo);
@@ -112,65 +113,46 @@ namespace gfx
         }
     }
 
+    void Renderer::renderBackgroundShader(ShaderProgram* shader, const glm::vec3& color, int width, int height) const
+    {
+        if (!shader)
+            return;
+
+        glDisable(GL_DEPTH_TEST);
+        shader->use();
+        shader->setVec3("uColor", color);
+
+        if (width > 0 && height > 0)
+            shader->setVec2("uResolution", glm::vec2(static_cast<float>(width), static_cast<float>(height)));
+
+        glBindVertexArray(backgroundVao_);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glBindVertexArray(0);
+
+        glEnable(GL_DEPTH_TEST);
+    }
+
     void Renderer::applyBackground(const RenderSettings& settings, int width, int height)
     {
         const auto color = settings.getBackgroundColor();
 
+        glClearColor(color.r, color.g, color.b, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         switch (settings.backgroundType)
         {
         case RenderSettings::BackgroundType::SolidColor:
-            glClearColor(color.r, color.g, color.b, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             break;
 
         case RenderSettings::BackgroundType::Gradient:
-        {
-            glClearColor(color.r, color.g, color.b, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             ensureBackgroundInitialized();
-
-            if (!backgroundShader_)
-            {
-                break;
-            }
-
-            glDisable(GL_DEPTH_TEST);
-            backgroundShader_->use();
-            backgroundShader_->setVec3("uColor", color);
-
-            glBindVertexArray(backgroundVao_);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            glBindVertexArray(0);
-
-            glEnable(GL_DEPTH_TEST);
+            renderBackgroundShader(backgroundShader_.get(), color, -1, -1);
             break;
-        }
 
         case RenderSettings::BackgroundType::Checkered:
-        {
-            glClearColor(color.r, color.g, color.b, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             ensureBackgroundInitialized();
-
-            if (!checkeredShader_)
-            {
-                break;
-            }
-
-            glDisable(GL_DEPTH_TEST);
-            checkeredShader_->use();
-            checkeredShader_->setVec3("uColor", color);
-            checkeredShader_->setVec2("uResolution", glm::vec2(static_cast<float>(width), static_cast<float>(height)));
-
-            glBindVertexArray(backgroundVao_);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-            glBindVertexArray(0);
-
-            glEnable(GL_DEPTH_TEST);
+            renderBackgroundShader(checkeredShader_.get(), color, width, height);
             break;
-        }
         }
     }
 
@@ -192,6 +174,7 @@ namespace gfx
 
         shader_->setMat4("uView", view);
         shader_->setMat4("uProjection", projection);
+        shader_->setMat4("uModel", scene.modelTransform);
         shader_->setVec3("uMeshColor", settings.getMeshColor());
 
         if (scene.model.has_value())

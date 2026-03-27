@@ -1,5 +1,6 @@
 #include "ui/ViewportPanel.h"
 #include "gfx/Renderer.h"
+#include "gfx/RenderSettings.h"
 #include "scene/CameraOrbit.h"
 #include "scene/Scene.h"
 
